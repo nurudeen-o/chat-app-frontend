@@ -58,9 +58,9 @@ export default function UserList({ currentUser, onSelectChat, onStartCall }) {
               <button onClick={() => onStartCall(`chat_${currentUser._id}_${user._id}`, 'audio')}>
                 Call
               </button>
-              <button onClick={() => onStartCall(`chat_${currentUser._id}_${user._id}`, 'video')}>
+              {/* <button onClick={() => onStartCall(`chat_${currentUser._id}_${user._id}`, 'video')}>
                 Video
-              </button>
+              </button> */}
             </div>
           </li>
         ))}

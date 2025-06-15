@@ -52,7 +52,7 @@ export default function Chat({ chatId, currentUser, socket, onStartCall }) {
         <h3>Chat</h3>
         <div className="call-buttons">
           <button onClick={() => onStartCall(chatId, 'audio', currentUser.username)}>Call</button>
-          <button onClick={() => onStartCall(chatId, 'video', currentUser.username)}>Video</button>
+          {/* <button onClick={() => onStartCall(chatId, 'video', currentUser.username)}>Video</button> */}
         </div>
       </div>
       
