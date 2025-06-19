@@ -23,24 +23,23 @@ export default function UserList({ currentUser, onSelectChat, onStartCall }) {
   }, []);
 
   const handleStartChat = async (user) => {
-    // In a real app, you'd create/load a chat here
-    onSelectChat({
-      _id: `684ec4db98ca9238432ceea5`,
-      participants: [currentUser, user]
-    });
-    // try {
-    //     const response = await fetch('https://chat-app.saharix.com/api/chats/start', {
-    //       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`,'Content-Type': 'application/json'  },
-    //       body: JSON.stringify({
-    //         participantId: user._id
-    //       }),
-    //       method: 'POST'
-    //     });
-    //     const data = await response.json();
-    //     console.log(data)
-    // } catch(e){
-    //     console.log(e);
-    // }
+    try {
+        const response = await fetch('https://chat-app.saharix.com/api/chats/start', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`,'Content-Type': 'application/json'  },
+          body: JSON.stringify({
+            participantId: user._id
+          }),
+          method: 'POST'
+        });
+        const data = await response.json();
+        console.log(data)
+        onSelectChat({
+          _id: data._id,
+          participants: data.participants
+        });
+    } catch(e){
+        console.log(e);
+    }
   };
 
   if (loading) return <div>Loading users...</div>;

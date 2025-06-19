@@ -1,4 +1,5 @@
 export default function CallModal({ caller, callType, from, onAnswer }) {
+  console.log(caller);
     return (
       <div className="call-modal">
         <div className="call-content">

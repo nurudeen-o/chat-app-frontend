@@ -17,14 +17,13 @@ function App() {
   const [incomingCall, setIncomingCall] = useState(null);
   const [activeCall, setActiveCall] = useState(null);
   
-  // WebRTC refs
+  // refs
   const localStreamRef = useRef(null);
   const remoteStreamRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const localAudioRef = useRef(null);
   const remoteAudioRef = useRef(null);
 
-  // ICE servers configuration
   const iceServers = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
@@ -32,11 +31,9 @@ function App() {
     ]
   };
 
-  // Initialize peer connection
   const createPeerConnection = () => {
     const pc = new RTCPeerConnection(iceServers);
     
-    // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         socket.emit('ice_candidate', {
@@ -46,7 +43,6 @@ function App() {
       }
     };
 
-    // Handle remote stream
     pc.ontrack = (event) => {
       console.log('Received remote stream');
       remoteStreamRef.current = event.streams[0];
@@ -58,7 +54,7 @@ function App() {
     return pc;
   };
 
-  // Get user media (audio only)
+  // Get user media 
   const getUserMedia = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -77,7 +73,6 @@ function App() {
     }
   };
 
-  // Connect socket when authenticated
   useEffect(() => {
     if (token) {
       socket.auth = { token };
@@ -89,7 +84,6 @@ function App() {
     };
   }, [token]);
 
-  // Socket event listeners
   useEffect(() => {
     const handleIncomingCall = (data) => {
       console.log("Incoming call", data);
@@ -104,12 +98,10 @@ function App() {
           from: incomingCall.from
         });
         
-        // Start WebRTC connection as caller
         if (data.accepted && !peerConnectionRef.current) {
           await initializeCall(true);
         }
       } else {
-        // Call was declined, cleanup
         cleanup();
       }
       setIncomingCall(null);
@@ -169,19 +161,15 @@ function App() {
   // Initialize WebRTC call
   const initializeCall = async (isInitiator) => {
     try {
-      // Get user media
       const stream = await getUserMedia();
       
-      // Create peer connection
       peerConnectionRef.current = createPeerConnection();
       
-      // Add local stream to peer connection
       stream.getTracks().forEach(track => {
         peerConnectionRef.current.addTrack(track, stream);
       });
 
       if (isInitiator) {
-        // Create and send offer
         const offer = await peerConnectionRef.current.createOffer();
         await peerConnectionRef.current.setLocalDescription(offer);
         
@@ -197,7 +185,6 @@ function App() {
     }
   };
 
-  // Cleanup WebRTC resources
   const cleanup = () => {
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => track.stop());
@@ -248,7 +235,6 @@ function App() {
         callType: incomingCall.callType,
         from: incomingCall.from
       });
-      // WebRTC initialization will be handled in the call_answered event
     } else {
       setIncomingCall(null);
     }
@@ -301,7 +287,6 @@ function App() {
           <p>Ongoing {activeCall.callType} call with {activeCall.from}</p>
           <button onClick={endCall}>End Call</button>
           
-          {/* Audio elements for local and remote streams */}
           <audio 
             ref={localAudioRef}
             autoPlay
